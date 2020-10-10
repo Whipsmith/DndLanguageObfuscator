@@ -213,7 +213,6 @@ val words = listOf(
     "wisyi",
     "wisyi",
     "wo",
-    "wo",
     "wokyu",
     "womt",
     "woond",

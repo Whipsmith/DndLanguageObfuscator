@@ -1,15 +1,10 @@
 package nz.co.opsmobile.ddlanguageobfuscator
 
 import com.google.common.truth.Truth.assertThat
-import io.mockk.clearAllMocks
-import io.mockk.every
-import io.mockk.mockkStatic
 import nz.co.opsmobile.ddlanguageobfuscator.languages.words
+import nz.co.opsmobile.ddlanguageobfuscator.utility.TestRandom
 import org.junit.Before
-
 import org.junit.Test
-import kotlin.random.Random
-import kotlin.random.nextInt
 
 class LanguageObfuscatorTest {
 lateinit var undertest: LanguageObfuscator
@@ -19,7 +14,6 @@ lateinit var undertest: LanguageObfuscator
 
     @Before
     fun setUp() {
-        clearAllMocks()
         undertest = LanguageObfuscator(input, RandomisedTranslator(source))
     }
 
@@ -81,8 +75,7 @@ lateinit var undertest: LanguageObfuscator
 
     @Test
     fun `test that proficiency up to 50 percent has basic words removed`() {
-        mockkStatic( "kotlin.random.RandomKt")
-        every { any<Random>().nextInt(1..100) } returns 1
+        undertest = LanguageObfuscator(input, RandomisedTranslator(source), randomiser = TestRandom())
         val proficiency = 50
 
         val actual = undertest.obfuscate(proficiency)
@@ -93,13 +86,11 @@ lateinit var undertest: LanguageObfuscator
 
     @Test
     fun `test that words are only used for one translation`() {
-        mockkStatic( "kotlin.random.RandomKt")
-        every { any<Random>().nextInt(any<IntRange>()) } returns 1
         val longInput = "Another bother, question. " +
                 "Travel porcupine! Tomato. Toward, pork. Hello " +
                 "Friendly tooth knife. Greetings through sun, snow, and tax returns."
         
-        undertest = LanguageObfuscator(longInput, RandomisedTranslator(source))
+        undertest = LanguageObfuscator(longInput, RandomisedTranslator(source, randomiser = TestRandom()), randomiser = TestRandom())
 
         val actual = undertest.obfuscate(0)
         
