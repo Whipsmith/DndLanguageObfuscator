@@ -1,6 +1,8 @@
 package nz.co.opsmobile.ddlanguageobfuscator
 
 import com.google.common.truth.Truth.assertThat
+import nz.co.opsmobile.ddlanguageobfuscator.dice.Roll
+import nz.co.opsmobile.ddlanguageobfuscator.dice.RollResult
 import nz.co.opsmobile.ddlanguageobfuscator.languages.words
 import nz.co.opsmobile.ddlanguageobfuscator.utility.TestRandom
 import org.junit.Before
@@ -75,7 +77,7 @@ lateinit var undertest: LanguageObfuscator
 
     @Test
     fun `test that proficiency up to 50 percent has basic words removed`() {
-        undertest = LanguageObfuscator(input, RandomisedTranslator(source), randomiser = TestRandom())
+        undertest = LanguageObfuscator(input, RandomisedTranslator(source), roll = PercentileRoll(1))
         val proficiency = 50
 
         val actual = undertest.obfuscate(proficiency)
@@ -90,7 +92,7 @@ lateinit var undertest: LanguageObfuscator
                 "Travel porcupine! Tomato. Toward, pork. Hello " +
                 "Friendly tooth knife. Greetings through sun, snow, and tax returns."
         
-        undertest = LanguageObfuscator(longInput, RandomisedTranslator(source, randomiser = TestRandom()), randomiser = TestRandom())
+        undertest = LanguageObfuscator(longInput, RandomisedTranslator(source, randomiser = TestRandom()), roll = PercentileRoll(1))
 
         val actual = undertest.obfuscate(0)
         
@@ -108,5 +110,11 @@ lateinit var undertest: LanguageObfuscator
         val split = actual.split(" ")
         assertThat(split[0]).isEqualTo("This")
         assertThat(split[1]).isEqualTo("is")
+    }
+
+    class PercentileRoll(val roll:Int): Roll{
+        override fun result(): RollResult {
+            return RollResult(listOf(), roll)
+        }
     }
 }

@@ -1,14 +1,15 @@
 package nz.co.opsmobile.ddlanguageobfuscator
 
-import kotlin.random.Random
-import kotlin.random.nextInt
+import nz.co.opsmobile.ddlanguageobfuscator.dice.Die
+import nz.co.opsmobile.ddlanguageobfuscator.dice.RandomisedRoll
+import nz.co.opsmobile.ddlanguageobfuscator.dice.Roll
 
 
 class LanguageObfuscator(
     private val input: String,
     private val translator: RandomisedTranslator,
     private val exclusions: List<String> = listOf(),
-    private val randomiser: Random = Random
+    private val roll: Roll = RandomisedRoll(Die.D100)
 ) {
     private val simpleWords = listOf(
         "a",
@@ -32,7 +33,7 @@ class LanguageObfuscator(
     }
 
     private fun passedProficiencyCheck(proficiency: Int) =
-        randomiser.nextInt(1..100) <= proficiency
+        roll.result().total <= proficiency
 
     private fun obfuscateWord(word: String): String {
         return translator.translateWord(word)
